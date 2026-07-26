@@ -86,11 +86,7 @@ jobs:
           submodules: recursive
 
       - name: Apply patches
-        run: |
-          for patch in patches/*.patch; do
-            echo "Applying: $patch"
-            git -C source apply "../$patch"
-          done
+        run: bash apply-patches.sh source
 
       - name: Decode keystore from secret
         if: env.SIGNING_KEY != ''
@@ -156,7 +152,7 @@ jobs:
             - Local/offline accounts now work for everyone without requiring Microsoft login
             - Update check URL points to this repo
 
-            See [patches](${{ github.server_url }}/${{ github.repository }}/tree/main/patches/) for the full diff.
+            See [apply-patches.sh](${{ github.server_url }}/${{ github.repository }}/blob/main/apply-patches.sh) for the full diff.
           files: ./release/*.apk
           fail_on_unmatched_files: true
 
