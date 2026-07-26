@@ -1,0 +1,200 @@
+name: Auto Patch & Release
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Build variant'
+        required: true
+        default: 'Release'
+        type: choice
+        options: [Debug, Release]
+      force:
+        description: 'Force rebuild'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID || '' }}
+  CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY || '' }}
+  KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || '' }}
+  STORE_PASSWORD: ${{ secrets.STORE_PASSWORD || '' }}
+  SIGNING_KEY: ${{ secrets.SIGNING_KEY || '' }}
+
+jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      version_code: ${{ steps.get-version.outputs.version_code }}
+      version_name: ${{ steps.get-version.outputs.version_name }}
+      should_build: ${{ steps.check.outputs.should_build }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Get latest upstream release
+        id: get-version
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/ZalithLauncher/ZalithLauncher2/releases/latest \
+            | jq -r .tag_name)
+          echo "version=$LATEST" >> $GITHUB_OUTPUT
+
+          RAW_URL="https://raw.githubusercontent.com/ZalithLauncher/ZalithLauncher2/$LATEST/ZalithLauncher/gradle.properties"
+          VERSION_CODE=$(curl -s "$RAW_URL" | grep "^launcher_version_code=" | cut -d= -f2)
+          VERSION_NAME=$(curl -s "$RAW_URL" | grep "^launcher_version_name=" | cut -d= -f2)
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Upstream: $LATEST (code=$VERSION_CODE, name=$VERSION_NAME)"
+
+      - name: Check if already built
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            echo "should_build=true" >> $GITHUB_OUTPUT
+          elif gh release view "$VERSION" --repo ${{ github.repository }} 2>/dev/null; then
+            echo "Release $VERSION already exists, skipping"
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          else
+            echo "should_build=true" >> $GITHUB_OUTPUT
+          fi
+
+  build:
+    needs: check-upstream
+    if: needs.check-upstream.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: ["all", "arm", "arm64", "x86", "x86_64"]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Clone upstream at release tag
+        uses: actions/checkout@v6
+        with:
+          repository: ZalithLauncher/ZalithLauncher2
+          ref: ${{ needs.check-upstream.outputs.version }}
+          path: source
+          submodules: recursive
+
+      - name: Apply patches
+        run: |
+          for patch in patches/*.patch; do
+            echo "Applying: $patch"
+            git -C source apply "../$patch"
+          done
+
+      - name: Decode keystore from secret
+        if: env.SIGNING_KEY != ''
+        run: |
+          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > source/ZalithLauncher/zalith_launcher.jks
+          echo "Decoded keystore from SIGNING_KEY secret"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          add-job-summary: "on-failure"
+
+      - name: Build APK for ${{ matrix.arch }}
+        run: |
+          chmod +x gradlew
+          ./gradlew ZalithLauncher:assemble${{ github.event.inputs.variant || 'Release' }} -Darch=${{ matrix.arch }}
+        working-directory: source
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: apk (${{ matrix.arch }})
+          path: source/ZalithLauncher/build/outputs/apk/*/*.apk
+
+  release:
+    needs: [check-upstream, build]
+    if: needs.check-upstream.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download all APKs
+        uses: actions/download-artifact@v8
+        with:
+          path: ./apks
+
+      - name: Organize APKs
+        run: |
+          mkdir -p ./release
+          find ./apks -name "*.apk" -type f -exec cp {} ./release/ \;
+          echo "Collected APKs:"
+          ls -la ./release/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.check-upstream.outputs.version }}
+          name: ${{ needs.check-upstream.outputs.version }} (patched)
+          body: |
+            Automated build from upstream [${{ needs.check-upstream.outputs.version }}](https://github.com/ZalithLauncher/ZalithLauncher2/releases/tag/${{ needs.check-upstream.outputs.version }}).
+
+            **Changes:**
+            - Removed geo-restriction blocking offline/local accounts for users outside China without a Microsoft account
+            - Local/offline accounts now work for everyone without requiring Microsoft login
+            - Update check URL points to this repo
+
+            See [patches](${{ github.server_url }}/${{ github.repository }}/tree/main/patches/) for the full diff.
+          files: ./release/*.apk
+          fail_on_unmatched_files: true
+
+      - name: Generate version file
+        run: |
+          TAG="${{ needs.check-upstream.outputs.version }}"
+          CODE="${{ needs.check-upstream.outputs.version_code }}"
+          NAME="${{ needs.check-upstream.outputs.version_name }}"
+          REPO="${{ github.repository }}"
+
+          jq -n \
+            --argjson code "$CODE" \
+            --arg version "$NAME" \
+            --arg created_at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+            --arg all_url "https://github.com/$REPO/releases/download/$TAG/ZalithLauncher-$NAME-all.apk" \
+            --arg arm_url "https://github.com/$REPO/releases/download/$TAG/ZalithLauncher-$NAME-arm.apk" \
+            --arg arm64_url "https://github.com/$REPO/releases/download/$TAG/ZalithLauncher-$NAME-arm64.apk" \
+            --arg x86_url "https://github.com/$REPO/releases/download/$TAG/ZalithLauncher-$NAME-x86.apk" \
+            --arg x86_64_url "https://github.com/$REPO/releases/download/$TAG/ZalithLauncher-$NAME-x86_64.apk" \
+            '{
+              code: $code,
+              version: $version,
+              created_at: $created_at,
+              files: [
+                {file_name: ("ZalithLauncher-" + $version + "-all.apk"), uri: $all_url, arch: "all"},
+                {file_name: ("ZalithLauncher-" + $version + "-arm.apk"), uri: $arm_url, arch: "arm"},
+                {file_name: ("ZalithLauncher-" + $version + "-arm64.apk"), uri: $arm64_url, arch: "arm64"},
+                {file_name: ("ZalithLauncher-" + $version + "-x86.apk"), uri: $x86_url, arch: "x86"},
+                {file_name: ("ZalithLauncher-" + $version + "-x86_64.apk"), uri: $x86_64_url, arch: "x86_64"}
+              ],
+              default_body: {language: "en", markdown: ("Automated build of upstream " + $version + " with patches applied.")},
+              bodies: [{language: "en", markdown: ("Automated build of upstream " + $version + " with patches applied.")}]
+            }' > latest_version_md.json
+
+      - name: Commit version file
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add latest_version_md.json
+          git diff --cached --quiet || git commit -m "Update version file for ${{ needs.check-upstream.outputs.version }}"
+          git push
