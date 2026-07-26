@@ -12,3 +12,4 @@ index 7b2b2408..c99145d3 100644
 +const val URL_PROJECT_INFO: String = "https://api.github.com/repos/Astreele/ZalithLauncher2-patches/contents"
  const val URL_COMMUNITY: String = "https://github.com/ZalithLauncher/ZalithLauncher2/graphs/contributors"
  const val URL_WEBLATE: String = "https://hosted.weblate.org/projects/zalithlauncher2"
+
