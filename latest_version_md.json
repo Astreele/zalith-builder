@@ -1,0 +1,42 @@
+{
+  "code": 200033,
+  "version": "2.4.10",
+  "created_at": "2026-07-26T19:35:41Z",
+  "files": [
+    {
+      "file_name": "ZalithLauncher-2.4.10-all.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-all.apk",
+      "arch": "all"
+    },
+    {
+      "file_name": "ZalithLauncher-2.4.10-arm.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-arm.apk",
+      "arch": "arm"
+    },
+    {
+      "file_name": "ZalithLauncher-2.4.10-arm64.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-arm64.apk",
+      "arch": "arm64"
+    },
+    {
+      "file_name": "ZalithLauncher-2.4.10-x86.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-x86.apk",
+      "arch": "x86"
+    },
+    {
+      "file_name": "ZalithLauncher-2.4.10-x86_64.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-x86_64.apk",
+      "arch": "x86_64"
+    }
+  ],
+  "default_body": {
+    "language": "en",
+    "markdown": "Automated build of upstream 2.4.10 with patches applied."
+  },
+  "bodies": [
+    {
+      "language": "en",
+      "markdown": "Automated build of upstream 2.4.10 with patches applied."
+    }
+  ]
+}
