@@ -22,7 +22,6 @@ env:
   CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY || '' }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || '' }}
   STORE_PASSWORD: ${{ secrets.STORE_PASSWORD || '' }}
-  SIGNING_KEY: ${{ secrets.SIGNING_KEY || '' }}
 
 jobs:
   check-upstream:
@@ -88,18 +87,9 @@ jobs:
       - name: Apply patches
         run: bash apply-patches.sh source
 
-      - name: Decode keystore from secret
-        if: env.SIGNING_KEY != ''
-        shell: bash
-        env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      - name: Copy keystore
         run: |
-          base64 -d <<< "$SIGNING_KEY" > source/ZalithLauncher/zalith_launcher.jks
-          echo "Decoded keystore from SIGNING_KEY secret"
-
-      - name: Verify keystore
-        if: env.SIGNING_KEY != ''
-        run: |
+          cp zalith_launcher.jks source/ZalithLauncher/zalith_launcher.jks
           keytool -list -keystore source/ZalithLauncher/zalith_launcher.jks \
             -storepass "$STORE_PASSWORD" -alias movtery_zalith \
             -keypass "$KEY_PASSWORD"
