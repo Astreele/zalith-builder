@@ -4,7 +4,7 @@ set -euo pipefail
 SOURCE_DIR="${1:-source}"
 
 ACCOUNTS_FILE="$SOURCE_DIR/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/game/account/AccountsManager.kt"
-URL_FILE="$SOURCE_DIR/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/path/UrlManager.kt
+URL_FILE="$SOURCE_DIR/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/path/UrlManager.kt"
 
 # --- Patch: Bypass offline limit ---
 echo "[1/1] Bypassing offline limit..."
