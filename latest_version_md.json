@@ -1,42 +1,42 @@
 {
-  "code": 200033,
-  "version": "2.4.10",
-  "created_at": "2026-07-27T05:42:58Z",
+  "code": 200034,
+  "version": "2.4.11",
+  "created_at": "2026-08-10T08:04:04Z",
   "files": [
     {
-      "file_name": "ZalithLauncher-2.4.10-all.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-all.apk",
+      "file_name": "ZalithLauncher-2.4.11-all.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-all.apk",
       "arch": "all"
     },
     {
-      "file_name": "ZalithLauncher-2.4.10-arm.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-arm.apk",
+      "file_name": "ZalithLauncher-2.4.11-arm.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-arm.apk",
       "arch": "arm"
     },
     {
-      "file_name": "ZalithLauncher-2.4.10-arm64.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-arm64.apk",
+      "file_name": "ZalithLauncher-2.4.11-arm64.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-arm64.apk",
       "arch": "arm64"
     },
     {
-      "file_name": "ZalithLauncher-2.4.10-x86.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-x86.apk",
+      "file_name": "ZalithLauncher-2.4.11-x86.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-x86.apk",
       "arch": "x86"
     },
     {
-      "file_name": "ZalithLauncher-2.4.10-x86_64.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.10/ZalithLauncher-2.4.10-x86_64.apk",
+      "file_name": "ZalithLauncher-2.4.11-x86_64.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-x86_64.apk",
       "arch": "x86_64"
     }
   ],
   "default_body": {
     "language": "en",
-    "markdown": "Automated build of upstream 2.4.10 with patches applied."
+    "markdown": "Automated build of upstream 2.4.11 with patches applied."
   },
   "bodies": [
     {
       "language": "en",
-      "markdown": "Automated build of upstream 2.4.10 with patches applied."
+      "markdown": "Automated build of upstream 2.4.11 with patches applied."
     }
   ]
 }
