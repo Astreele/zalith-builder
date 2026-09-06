@@ -1,42 +1,42 @@
 {
-  "code": 200034,
-  "version": "2.4.11",
-  "created_at": "2026-08-10T08:04:04Z",
+  "code": 200036,
+  "version": "2.5",
+  "created_at": "2026-09-06T10:55:11Z",
   "files": [
     {
-      "file_name": "ZalithLauncher-2.4.11-all.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-all.apk",
+      "file_name": "ZalithLauncher-2.5-all.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.5/ZalithLauncher-2.5-all.apk",
       "arch": "all"
     },
     {
-      "file_name": "ZalithLauncher-2.4.11-arm.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-arm.apk",
+      "file_name": "ZalithLauncher-2.5-arm.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.5/ZalithLauncher-2.5-arm.apk",
       "arch": "arm"
     },
     {
-      "file_name": "ZalithLauncher-2.4.11-arm64.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-arm64.apk",
+      "file_name": "ZalithLauncher-2.5-arm64.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.5/ZalithLauncher-2.5-arm64.apk",
       "arch": "arm64"
     },
     {
-      "file_name": "ZalithLauncher-2.4.11-x86.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-x86.apk",
+      "file_name": "ZalithLauncher-2.5-x86.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.5/ZalithLauncher-2.5-x86.apk",
       "arch": "x86"
     },
     {
-      "file_name": "ZalithLauncher-2.4.11-x86_64.apk",
-      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.4.11/ZalithLauncher-2.4.11-x86_64.apk",
+      "file_name": "ZalithLauncher-2.5-x86_64.apk",
+      "uri": "https://github.com/Astreele/zalith-builder/releases/download/2.5/ZalithLauncher-2.5-x86_64.apk",
       "arch": "x86_64"
     }
   ],
   "default_body": {
     "language": "en",
-    "markdown": "Automated build of upstream 2.4.11 with patches applied."
+    "markdown": "Automated build of upstream 2.5 with patches applied."
   },
   "bodies": [
     {
       "language": "en",
-      "markdown": "Automated build of upstream 2.4.11 with patches applied."
+      "markdown": "Automated build of upstream 2.5 with patches applied."
     }
   ]
 }
